@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SOAZ — Digital Studio</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+
+/* =========================
+RESET
+========================= */
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Inter',sans-serif;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  background:#050505;
+  color:white;
+  overflow-x:hidden;
+  cursor:none;
+}
+
+a{
+  text-decoration:none;
+  color:inherit;
+}
+
+/* =========================
+SCROLLBAR
+========================= */
+
+::-webkit-scrollbar{
+  width:12px;
+}
+
+::-webkit-scrollbar-track{
+  background:#050505;
+}
+
+::-webkit-scrollbar-thumb{
+  background:linear-gradient(
+    180deg,
+    #7b2cff,
+    #4e11b5
+  );
+
+  border-radius:30px;
+  border:2px solid #050505;
+
+  box-shadow:
+  0 0 15px rgba(123,44,255,.5);
+}
+
+::-webkit-scrollbar-thumb:hover{
+  background:linear-gradient(
+    180deg,
+    #9d63ff,
+    #7b2cff
+  );
+}
+
+/* =========================
+CURSOR
+========================= */
+
+.cursor{
+  width:22px;
+  height:22px;
+  border:2px solid #8f45ff;
+  border-radius:50%;
+  position:fixed;
+  pointer-events:none;
+  transform:translate(-50%,-50%);
+  z-index:999999;
+
+  backdrop-filter:blur(2px);
+
+  box-shadow:
+  0 0 12px rgba(143,69,255,.6),
+  0 0 25px rgba(143,69,255,.4);
+
+  transition:
+  width .2s ease,
+  height .2s ease,
+  transform .08s linear,
+  background .2s ease;
+}
+
+.cursor-dot{
+  width:6px;
+  height:6px;
+  background:#c084ff;
+  border-radius:50%;
+  position:fixed;
+  pointer-events:none;
+  transform:translate(-50%,-50%);
+  z-index:999999;
+
+  box-shadow:
+  0 0 10px #8f45ff,
+  0 0 20px #8f45ff;
+}
+
+.cursor-hover{
+  width:55px;
+  height:55px;
+  background:rgba(143,69,255,.12);
+  border-color:#c084ff;
+}
+
+/* =========================
+BACKGROUND
+========================= */
+
+.bg{
+  position:fixed;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  z-index:-2;
+}
+
+.blur{
+  position:absolute;
+  border-radius:50%;
+  filter:blur(120px);
+  opacity:.45;
+}
+
+.blur1{
+  width:420px;
+  height:420px;
+  background:#7b2cff;
+  top:-100px;
+  left:-100px;
+}
+
+.blur2{
+  width:320px;
+  height:320px;
+  background:#4e11b5;
+  bottom:-100px;
+  right:-100px;
+}
+
+/* =========================
+FLOATING ELEMENTS
+========================= */
+
+.floating{
+  position:absolute;
+  border-radius:50%;
+  background:rgba(143,69,255,.12);
+  backdrop-filter:blur(4px);
+  animation:float 6s ease-in-out infinite;
+  z-index:-1;
+}
+
+.float1{
+  width:80px;
+  height:80px;
+  top:12%;
+  left:10%;
+}
+
+.float2{
+  width:120px;
+  height:120px;
+  top:70%;
+  right:10%;
+  animation-delay:2s;
+}
+
+.float3{
+  width:60px;
+  height:60px;
+  bottom:15%;
+  left:35%;
+  animation-delay:4s;
+}
+
+@keyframes float{
+
+  0%{
+    transform:translateY(0px);
+  }
+
+  50%{
+    transform:translateY(-20px);
+  }
+
+  100%{
+    transform:translateY(0px);
+  }
+
+}
+
+/* =========================
+HEADER
+========================= */
+
+header{
+  width:100%;
+  padding:22px 8%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:fixed;
+  top:0;
+  left:0;
+  z-index:999;
+  transition:.4s;
+  backdrop-filter:blur(10px);
+  background:rgba(0,0,0,.25);
+  border-bottom:1px solid rgba(255,255,255,.04);
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+}
+
+.logo img{
+  width:72px;
+  object-fit:contain;
+  transition:.4s;
+
+  filter:
+  drop-shadow(0 0 12px rgba(123,44,255,.3));
+}
+
+.logo img:hover{
+  transform:scale(1.05) rotate(-2deg);
+
+  filter:
+  drop-shadow(0 0 25px rgba(123,44,255,.6));
+}
+
+nav{
+  display:flex;
+  gap:40px;
+}
+
+nav a{
+  text-decoration:none;
+  color:#d6d6d6;
+  transition:.3s;
+  font-size:15px;
+  position:relative;
+}
+
+nav a::after{
+  content:'';
+  position:absolute;
+  width:0%;
+  height:2px;
+  background:#8f45ff;
+  left:0;
+  bottom:-6px;
+  transition:.3s;
+}
+
+nav a:hover{
+  color:white;
+}
+
+nav a:hover::after{
+  width:100%;
+}
+
+.btn{
+  padding:14px 28px;
+  border:none;
+  border-radius:15px;
+
+  background:linear-gradient(
+    135deg,
+    #7b2cff,
+    #9d63ff
+  );
+
+  color:white;
+  font-weight:600;
+  cursor:none;
+  transition:.4s;
+
+  box-shadow:
+  0 0 25px rgba(123,44,255,.35);
+}
+
+.btn:hover{
+  transform:translateY(-4px);
+
+  box-shadow:
+  0 0 35px rgba(123,44,255,.55);
+}
+
+/* =========================
+HERO
+========================= */
+
+.hero{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:160px 8% 100px;
+  gap:60px;
+}
+
+.hero-text{
+  max-width:650px;
+}
+
+.tag{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+
+  padding:10px 18px;
+  border-radius:50px;
+
+  border:1px solid rgba(255,255,255,.07);
+
+  background:rgba(255,255,255,.03);
+
+  margin-bottom:25px;
+
+  color:#cfcfcf;
+  font-size:14px;
+}
+
+.dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:#8f45ff;
+
+  box-shadow:
+  0 0 15px #8f45ff;
+}
+
+.hero h1{
+  font-size:82px;
+  line-height:1;
+  margin-bottom:25px;
+  font-weight:900;
+}
+
+.hero h1 span{
+  color:#8f45ff;
+}
+
+.hero p{
+  color:#b0b0b0;
+  line-height:1.9;
+  font-size:18px;
+  margin-bottom:35px;
+}
+
+.hero-buttons{
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+.btn-secondary{
+  background:transparent;
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:none;
+}
+
+.btn-secondary:hover{
+  background:rgba(123,44,255,.08);
+  border-color:#8f45ff;
+}
+
+/* =========================
+CARD
+========================= */
+
+.visual{
+  position:relative;
+}
+
+.card{
+  width:450px;
+  height:450px;
+  border-radius:35px;
+
+  background:linear-gradient(
+    145deg,
+    #101010,
+    #070707
+  );
+
+  border:1px solid rgba(255,255,255,.05);
+
+  position:relative;
+  overflow:hidden;
+
+  transition:.2s;
+
+  box-shadow:
+  0 0 60px rgba(123,44,255,.18),
+  inset 0 0 40px rgba(255,255,255,.02);
+}
+
+.card::before{
+  content:'';
+  position:absolute;
+
+  width:220px;
+  height:220px;
+
+  background:#7b2cff;
+  border-radius:50%;
+
+  filter:blur(100px);
+
+  top:-50px;
+  right:-50px;
+
+  opacity:.55;
+}
+
+.paint{
+  position:absolute;
+
+  width:130px;
+  height:130px;
+
+  border-radius:50%;
+
+  background:#8f45ff;
+
+  filter:blur(80px);
+  opacity:.4;
+}
+
+.paint1{
+  bottom:20px;
+  left:20px;
+}
+
+.paint2{
+  top:20px;
+  right:20px;
+}
+
+.hero-logo{
+  position:absolute;
+
+  width:270px;
+
+  top:50%;
+  left:50%;
+
+  transform:translate(-50%,-50%) rotate(-6deg);
+
+  z-index:2;
+
+  filter:
+  drop-shadow(0 0 30px rgba(255,255,255,.06))
+  drop-shadow(0 0 35px rgba(123,44,255,.35));
+
+  transition:.5s;
+}
+
+.hero-logo:hover{
+  transform:
+  translate(-50%,-50%)
+  scale(1.06)
+  rotate(-4deg);
+}
+
+/* =========================
+SERVICES
+========================= */
+
+.services{
+  padding:120px 8%;
+}
+
+.section-title{
+  text-align:center;
+  margin-bottom:70px;
+}
+
+.section-title h2{
+  font-size:56px;
+  margin-bottom:15px;
+}
+
+.section-title span{
+  color:#8f45ff;
+}
+
+.section-title p{
+  color:#9e9e9e;
+}
+
+.grid{
+  display:grid;
+
+  grid-template-columns:
+  repeat(auto-fit,minmax(260px,1fr));
+
+  gap:25px;
+}
+
+.service-card{
+  background:rgba(255,255,255,.03);
+
+  border:1px solid rgba(255,255,255,.05);
+
+  border-radius:28px;
+  padding:35px;
+
+  transition:.4s;
+
+  position:relative;
+  overflow:hidden;
+}
+
+.service-card::before{
+  content:'';
+  position:absolute;
+
+  width:180px;
+  height:180px;
+
+  background:#7b2cff;
+
+  border-radius:50%;
+
+  filter:blur(90px);
+
+  top:-70px;
+  right:-70px;
+
+  opacity:.15;
+}
+
+.service-card:hover{
+  transform:translateY(-10px);
+
+  border-color:rgba(143,69,255,.4);
+
+  box-shadow:
+  0 0 40px rgba(123,44,255,.18);
+}
+
+.icon{
+  font-size:44px;
+  margin-bottom:20px;
+}
+
+.service-card h3{
+  margin-bottom:15px;
+  font-size:24px;
+}
+
+.service-card p{
+  color:#b4b4b4;
+  line-height:1.8;
+}
+
+/* =========================
+ABOUT
+========================= */
+
+.about{
+  padding:120px 8%;
+}
+
+.about-box h2{
+  font-size:58px;
+  margin-bottom:25px;
+}
+
+.about-box span{
+  color:#8f45ff;
+}
+
+.about-box p{
+  color:#b3b3b3;
+  line-height:1.9;
+  margin-bottom:20px;
+}
+
+.stats{
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+  margin-top:30px;
+}
+
+.stat{
+  background:rgba(255,255,255,.03);
+
+  border:1px solid rgba(255,255,255,.05);
+
+  padding:25px;
+  border-radius:24px;
+
+  min-width:170px;
+}
+
+.stat h3{
+  font-size:36px;
+  color:#8f45ff;
+}
+
+.stat p{
+  margin-top:8px;
+  font-size:14px;
+}
+
+/* =========================
+CONTACT
+========================= */
+
+.contact{
+  padding:120px 8%;
+}
+
+.contact-box{
+  background:linear-gradient(
+    145deg,
+    #101010,
+    #080808
+  );
+
+  border:1px solid rgba(255,255,255,.05);
+
+  border-radius:35px;
+
+  padding:60px;
+
+  text-align:center;
+
+  position:relative;
+  overflow:hidden;
+}
+
+.contact-box::before{
+  content:'';
+
+  position:absolute;
+
+  width:250px;
+  height:250px;
+
+  background:#7b2cff;
+
+  border-radius:50%;
+
+  filter:blur(120px);
+
+  top:-80px;
+  right:-80px;
+
+  opacity:.4;
+}
+
+.contact-box h2{
+  font-size:52px;
+  margin-bottom:20px;
+}
+
+.contact-box p{
+  color:#b0b0b0;
+  margin-bottom:35px;
+}
+
+/* =========================
+FOOTER
+========================= */
+
+footer{
+  padding:40px 8%;
+  border-top:1px solid rgba(255,255,255,.05);
+
+  text-align:center;
+  color:#8f8f8f;
+}
+
+/* =========================
+RESPONSIVO
+========================= */
+
+@media(max-width:1100px){
+
+  .hero{
+    flex-direction:column;
+    text-align:center;
+  }
+
+  .hero-buttons{
+    justify-content:center;
+  }
+
+  .hero h1{
+    font-size:62px;
+  }
+
+  .card{
+    width:100%;
+    max-width:380px;
+    height:380px;
+  }
+
+  .hero-logo{
+    width:220px;
+  }
+
+  nav{
+    display:none;
+  }
+
+}
+
+@media(max-width:700px){
+
+  .hero h1{
+    font-size:48px;
+  }
+
+  .section-title h2,
+  .about-box h2,
+  .contact-box h2{
+    font-size:38px;
+  }
+
+  .contact-box{
+    padding:40px 25px;
+  }
+
+  .logo img{
+    width:58px;
+  }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- CURSOR -->
+
+<div class="cursor"></div>
+<div class="cursor-dot"></div>
+
+<!-- BACKGROUND -->
+
+<div class="bg">
+  <div class="blur blur1"></div>
+  <div class="blur blur2"></div>
+</div>
+
+<!-- FLOATING -->
+
+<div class="floating float1"></div>
+<div class="floating float2"></div>
+<div class="floating float3"></div>
+
+<!-- HEADER -->
+
+<header>
+
+  <div class="logo">
+    <img src="logo.png" alt="SOAZ Logo">
+  </div>
+
+  <nav>
+    <a href="#">Início</a>
+    <a href="#services">Serviços</a>
+    <a href="#about">Sobre</a>
+    <a href="#contact">Contato</a>
+  </nav>
+
+  <a href="https://w.app/soaz" target="_blank">
+    <button class="btn">
+      Entrar em contato
+    </button>
+  </a>
+
+</header>
+
+<!-- HERO -->
+
+<section class="hero parallax">
+
+  <div class="hero-text">
+
+    <div class="tag">
+      <div class="dot"></div>
+      Nova geração digital
+    </div>
+
+    <h1>
+      Criando experiências
+      <span>digitais</span>
+      do futuro.
+    </h1>
+
+    <p>
+      A SOAZ transforma ideias em sites,
+      sistemas e plataformas modernas
+      com identidade visual marcante,
+      performance extrema e design
+      inspirado na cultura urbana.
+    </p>
+
+    <div class="hero-buttons">
+
+      <a href="https://w.app/soaz" target="_blank">
+        <button class="btn">
+          Começar projeto
+        </button>
+      </a>
+
+      <button class="btn btn-secondary">
+        Ver projetos
+      </button>
+
+    </div>
+
+  </div>
+
+  <div class="visual">
+
+    <div class="card">
+
+      <div class="paint paint1"></div>
+      <div class="paint paint2"></div>
+
+      <img
+        src="logo.png"
+        class="hero-logo"
+        alt="SOAZ">
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- SERVICES -->
+
+<section class="services parallax" id="services">
+
+  <div class="section-title">
+
+    <h2>
+      Nossos <span>Serviços</span>
+    </h2>
+
+    <p>
+      Minimalismo. Tecnologia. Impacto visual.
+    </p>
+
+  </div>
+
+  <div class="grid">
+
+    <div class="service-card">
+
+      <div class="icon">💻</div>
+
+      <h3>Sites Premium</h3>
+
+      <p>
+        Sites modernos com visual impactante,
+        animações suaves e experiência futurista.
+      </p>
+
+    </div>
+
+    <div class="service-card">
+
+      <div class="icon">⚡</div>
+
+      <h3>Sistemas Web</h3>
+
+      <p>
+        Plataformas inteligentes para empresas,
+        engenharia e startups.
+      </p>
+
+    </div>
+
+    <div class="service-card">
+
+      <div class="icon">🎨</div>
+
+      <h3>UI/UX Design</h3>
+
+      <p>
+        Interfaces minimalistas inspiradas
+        em street art e tecnologia.
+      </p>
+
+    </div>
+
+    <div class="service-card">
+
+      <div class="icon">🚀</div>
+
+      <h3>Inovação Digital</h3>
+
+      <p>
+        Transformamos ideias em negócios
+        digitais modernos.
+      </p>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ABOUT -->
+
+<section class="about parallax" id="about">
+
+  <div class="about-box">
+
+    <h2>
+      Somos a <span>SOAZ</span>
+    </h2>
+
+    <p>
+      Uma software house criada para construir
+      experiências digitais diferentes do padrão.
+    </p>
+
+    <p>
+      Misturamos design futurista,
+      tecnologia moderna e identidade visual forte.
+    </p>
+
+    <div class="stats">
+
+      <div class="stat">
+        <h3>100%</h3>
+        <p>Visual moderno</p>
+      </div>
+
+      <div class="stat">
+        <h3>24/7</h3>
+        <p>Inovação constante</p>
+      </div>
+
+      <div class="stat">
+        <h3>∞</h3>
+        <p>Possibilidades</p>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- CONTACT -->
+
+<section class="contact parallax" id="contact">
+
+  <div class="contact-box">
+
+    <h2>
+      Vamos criar algo absurdo?
+    </h2>
+
+    <p>
+      Entre em contato e transforme sua ideia
+      em uma experiência digital.
+    </p>
+
+    <a href="https://w.app/soaz" target="_blank">
+      <button class="btn">
+        Falar com a SOAZ
+      </button>
+    </a>
+
+  </div>
+
+</section>
+
+<!-- FOOTER -->
+
+<footer>
+  © 2026 SOAZ — Digital Studio.
+</footer>
+
+<script>
+
+/* =========================
+HEADER
+========================= */
+
+window.addEventListener("scroll", () => {
+
+  const header = document.querySelector("header");
+
+  if(window.scrollY > 20){
+
+    header.style.background =
+    "rgba(0,0,0,.7)";
+
+  }else{
+
+    header.style.background =
+    "rgba(0,0,0,.25)";
+
+  }
+
+});
+
+/* =========================
+CURSOR
+========================= */
+
+const cursor =
+document.querySelector(".cursor");
+
+const cursorDot =
+document.querySelector(".cursor-dot");
+
+document.addEventListener(
+  "mousemove",
+  (e) => {
+
+    cursor.style.left =
+    e.clientX + "px";
+
+    cursor.style.top =
+    e.clientY + "px";
+
+    cursorDot.style.left =
+    e.clientX + "px";
+
+    cursorDot.style.top =
+    e.clientY + "px";
+
+});
+
+/* =========================
+CURSOR HOVER
+========================= */
+
+const hoverItems =
+document.querySelectorAll(
+  "a, button, .service-card"
+);
+
+hoverItems.forEach((item) => {
+
+  item.addEventListener(
+    "mouseenter",
+    () => {
+
+      cursor.classList.add(
+        "cursor-hover"
+      );
+
+    });
+
+  item.addEventListener(
+    "mouseleave",
+    () => {
+
+      cursor.classList.remove(
+        "cursor-hover"
+      );
+
+    });
+
+});
+
+/* =========================
+PARALLAX
+========================= */
+
+window.addEventListener("scroll", () => {
+
+  const scrollY = window.scrollY;
+
+  document.querySelectorAll(
+    ".parallax"
+  ).forEach((element, index) => {
+
+    const speed =
+    (index + 1) * 0.03;
+
+    element.style.transform =
+    `translateY(${scrollY * speed}px)`;
+
+  });
+
+});
+
+/* =========================
+CARD 3D
+========================= */
+
+const card =
+document.querySelector(".card");
+
+document.addEventListener(
+  "mousemove",
+  (e) => {
+
+    let x =
+    (window.innerWidth / 2 - e.pageX) / 25;
+
+    let y =
+    (window.innerHeight / 2 - e.pageY) / 25;
+
+    card.style.transform =
+    `rotateY(${x}deg)
+     rotateX(${-y}deg)`;
+
+});
+
+/* =========================
+ANIMAÇÃO
+========================= */
+
+const observer =
+new IntersectionObserver(
+(entries) => {
+
+  entries.forEach((entry) => {
+
+    if(entry.isIntersecting){
+
+      entry.target.style.opacity = "1";
+
+      entry.target.style.transform =
+      "translateY(0)";
+
+    }
+
+  });
+
+});
+
+const hiddenElements =
+document.querySelectorAll(
+".service-card, .about-box, .contact-box"
+);
+
+hiddenElements.forEach((el) => {
+
+  el.style.opacity = "0";
+
+  el.style.transform =
+  "translateY(40px)";
+
+  el.style.transition = ".8s";
+
+  observer.observe(el);
+
+});
+
+</script>
+
+</body>
+</html>
