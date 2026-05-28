@@ -12,9 +12,9 @@
 
 <style>
 
-/* =========================
+/* =========================================
 RESET
-========================= */
+========================================= */
 
 *{
   margin:0;
@@ -32,6 +32,9 @@ body{
   color:white;
   overflow-x:hidden;
   cursor:none;
+
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
 }
 
 a{
@@ -39,9 +42,9 @@ a{
   color:inherit;
 }
 
-/* =========================
+/* =========================================
 SCROLLBAR
-========================= */
+========================================= */
 
 ::-webkit-scrollbar{
   width:12px;
@@ -73,9 +76,9 @@ SCROLLBAR
   );
 }
 
-/* =========================
+/* =========================================
 CURSOR
-========================= */
+========================================= */
 
 .cursor{
   width:22px;
@@ -122,9 +125,9 @@ CURSOR
   border-color:#c084ff;
 }
 
-/* =========================
+/* =========================================
 BACKGROUND
-========================= */
+========================================= */
 
 .bg{
   position:fixed;
@@ -157,9 +160,9 @@ BACKGROUND
   right:-100px;
 }
 
-/* =========================
+/* =========================================
 FLOATING ELEMENTS
-========================= */
+========================================= */
 
 .floating{
   position:absolute;
@@ -209,9 +212,9 @@ FLOATING ELEMENTS
 
 }
 
-/* =========================
+/* =========================================
 HEADER
-========================= */
+========================================= */
 
 header{
   width:100%;
@@ -256,7 +259,6 @@ nav{
 }
 
 nav a{
-  text-decoration:none;
   color:#d6d6d6;
   transition:.3s;
   font-size:15px;
@@ -309,9 +311,9 @@ nav a:hover::after{
   0 0 35px rgba(123,44,255,.55);
 }
 
-/* =========================
+/* =========================================
 HERO
-========================= */
+========================================= */
 
 .hero{
   min-height:100vh;
@@ -320,6 +322,8 @@ HERO
   justify-content:space-between;
   padding:160px 8% 100px;
   gap:60px;
+
+  will-change:transform;
 }
 
 .hero-text{
@@ -389,9 +393,9 @@ HERO
   border-color:#8f45ff;
 }
 
-/* =========================
+/* =========================================
 CARD
-========================= */
+========================================= */
 
 .visual{
   position:relative;
@@ -418,6 +422,8 @@ CARD
   box-shadow:
   0 0 60px rgba(123,44,255,.18),
   inset 0 0 40px rgba(255,255,255,.02);
+
+  will-change:transform;
 }
 
 .card::before{
@@ -488,12 +494,13 @@ CARD
   rotate(-4deg);
 }
 
-/* =========================
+/* =========================================
 SERVICES
-========================= */
+========================================= */
 
 .services{
   padding:120px 8%;
+  will-change:transform;
 }
 
 .section-title{
@@ -535,6 +542,8 @@ SERVICES
 
   position:relative;
   overflow:hidden;
+
+  will-change:transform;
 }
 
 .service-card::before{
@@ -580,12 +589,13 @@ SERVICES
   line-height:1.8;
 }
 
-/* =========================
+/* =========================================
 ABOUT
-========================= */
+========================================= */
 
 .about{
   padding:120px 8%;
+  will-change:transform;
 }
 
 .about-box h2{
@@ -631,12 +641,13 @@ ABOUT
   font-size:14px;
 }
 
-/* =========================
+/* =========================================
 CONTACT
-========================= */
+========================================= */
 
 .contact{
   padding:120px 8%;
+  will-change:transform;
 }
 
 .contact-box{
@@ -688,9 +699,9 @@ CONTACT
   margin-bottom:35px;
 }
 
-/* =========================
+/* =========================================
 FOOTER
-========================= */
+========================================= */
 
 footer{
   padding:40px 8%;
@@ -700,15 +711,56 @@ footer{
   color:#8f8f8f;
 }
 
-/* =========================
-RESPONSIVO
-========================= */
+/* =========================================
+RESPONSIVIDADE PREMIUM
+========================================= */
+
+@media(max-width:1400px){
+
+  .hero{
+    gap:40px;
+  }
+
+  .hero h1{
+    font-size:72px;
+  }
+
+  .card{
+    width:400px;
+    height:400px;
+  }
+
+}
 
 @media(max-width:1100px){
+
+  body{
+    cursor:auto;
+  }
+
+  .cursor,
+  .cursor-dot{
+    display:none;
+  }
+
+  header{
+    padding:20px 6%;
+  }
+
+  nav{
+    display:none;
+  }
 
   .hero{
     flex-direction:column;
     text-align:center;
+    justify-content:center;
+    padding:
+    160px 6% 100px;
+  }
+
+  .hero-text{
+    max-width:100%;
   }
 
   .hero-buttons{
@@ -716,7 +768,11 @@ RESPONSIVO
   }
 
   .hero h1{
-    font-size:62px;
+    font-size:58px;
+  }
+
+  .hero p{
+    font-size:17px;
   }
 
   .card{
@@ -729,30 +785,233 @@ RESPONSIVO
     width:220px;
   }
 
-  nav{
-    display:none;
-  }
-
-}
-
-@media(max-width:700px){
-
-  .hero h1{
-    font-size:48px;
+  .services,
+  .about,
+  .contact{
+    padding:100px 6%;
   }
 
   .section-title h2,
   .about-box h2,
   .contact-box h2{
-    font-size:38px;
+    font-size:48px;
   }
 
-  .contact-box{
-    padding:40px 25px;
+}
+
+@media(max-width:768px){
+
+  .parallax{
+    transform:none !important;
+  }
+
+  header{
+    padding:18px 5%;
   }
 
   .logo img{
     width:58px;
+  }
+
+  .btn{
+    padding:13px 22px;
+    font-size:14px;
+  }
+
+  .hero{
+    min-height:auto;
+    padding:
+    140px 5% 80px;
+  }
+
+  .hero h1{
+    font-size:46px;
+    line-height:1.1;
+  }
+
+  .hero p{
+    font-size:16px;
+    line-height:1.8;
+  }
+
+  .tag{
+    font-size:13px;
+    padding:9px 15px;
+  }
+
+  .hero-buttons{
+    flex-direction:column;
+    width:100%;
+  }
+
+  .hero-buttons a,
+  .hero-buttons button{
+    width:100%;
+  }
+
+  .btn,
+  .btn-secondary{
+    width:100%;
+  }
+
+  .card{
+    max-width:320px;
+    height:320px;
+    border-radius:28px;
+  }
+
+  .hero-logo{
+    width:180px;
+  }
+
+  .services,
+  .about,
+  .contact{
+    padding:80px 5%;
+  }
+
+  .section-title{
+    margin-bottom:50px;
+  }
+
+  .section-title h2,
+  .about-box h2,
+  .contact-box h2{
+    font-size:36px;
+  }
+
+  .section-title p,
+  .about-box p,
+  .contact-box p{
+    font-size:15px;
+    line-height:1.8;
+  }
+
+  .grid{
+    gap:18px;
+  }
+
+  .service-card{
+    padding:28px;
+    border-radius:24px;
+  }
+
+  .service-card h3{
+    font-size:22px;
+  }
+
+  .icon{
+    font-size:38px;
+  }
+
+  .stats{
+    flex-direction:column;
+  }
+
+  .stat{
+    width:100%;
+  }
+
+  .contact-box{
+    padding:45px 25px;
+    border-radius:28px;
+  }
+
+  footer{
+    padding:30px 5%;
+    font-size:14px;
+  }
+
+}
+
+@media(max-width:480px){
+
+  .hero{
+    padding-top:130px;
+  }
+
+  .hero h1{
+    font-size:38px;
+  }
+
+  .hero p{
+    font-size:15px;
+  }
+
+  .card{
+    max-width:280px;
+    height:280px;
+  }
+
+  .hero-logo{
+    width:160px;
+  }
+
+  .section-title h2,
+  .about-box h2,
+  .contact-box h2{
+    font-size:30px;
+  }
+
+  .service-card{
+    padding:24px;
+  }
+
+  .contact-box{
+    padding:35px 20px;
+  }
+
+  .btn{
+    padding:12px 18px;
+  }
+
+}
+
+@media(max-width:360px){
+
+  .hero h1{
+    font-size:32px;
+  }
+
+  .hero p{
+    font-size:14px;
+  }
+
+  .card{
+    max-width:250px;
+    height:250px;
+  }
+
+  .hero-logo{
+    width:140px;
+  }
+
+  .section-title h2,
+  .about-box h2,
+  .contact-box h2{
+    font-size:26px;
+  }
+
+}
+
+@media(hover:none){
+
+  .service-card:hover{
+    transform:none;
+  }
+
+  .btn:hover{
+    transform:none;
+  }
+
+  .hero-logo:hover{
+    transform:
+    translate(-50%,-50%)
+    rotate(-6deg);
+  }
+
+  .logo img:hover{
+    transform:none;
   }
 
 }
@@ -763,25 +1022,17 @@ RESPONSIVO
 
 <body>
 
-<!-- CURSOR -->
-
 <div class="cursor"></div>
 <div class="cursor-dot"></div>
-
-<!-- BACKGROUND -->
 
 <div class="bg">
   <div class="blur blur1"></div>
   <div class="blur blur2"></div>
 </div>
 
-<!-- FLOATING -->
-
 <div class="floating float1"></div>
 <div class="floating float2"></div>
 <div class="floating float3"></div>
-
-<!-- HEADER -->
 
 <header>
 
@@ -803,8 +1054,6 @@ RESPONSIVO
   </a>
 
 </header>
-
-<!-- HERO -->
 
 <section class="hero parallax">
 
@@ -862,8 +1111,6 @@ RESPONSIVO
   </div>
 
 </section>
-
-<!-- SERVICES -->
 
 <section class="services parallax" id="services">
 
@@ -937,8 +1184,6 @@ RESPONSIVO
 
 </section>
 
-<!-- ABOUT -->
-
 <section class="about parallax" id="about">
 
   <div class="about-box">
@@ -980,8 +1225,6 @@ RESPONSIVO
 
 </section>
 
-<!-- CONTACT -->
-
 <section class="contact parallax" id="contact">
 
   <div class="contact-box">
@@ -1005,17 +1248,15 @@ RESPONSIVO
 
 </section>
 
-<!-- FOOTER -->
-
 <footer>
   © 2026 SOAZ — Digital Studio.
 </footer>
 
 <script>
 
-/* =========================
+/* =========================================
 HEADER
-========================= */
+========================================= */
 
 window.addEventListener("scroll", () => {
 
@@ -1035,9 +1276,9 @@ window.addEventListener("scroll", () => {
 
 });
 
-/* =========================
+/* =========================================
 CURSOR
-========================= */
+========================================= */
 
 const cursor =
 document.querySelector(".cursor");
@@ -1063,9 +1304,9 @@ document.addEventListener(
 
 });
 
-/* =========================
+/* =========================================
 CURSOR HOVER
-========================= */
+========================================= */
 
 const hoverItems =
 document.querySelectorAll(
@@ -1096,9 +1337,11 @@ hoverItems.forEach((item) => {
 
 });
 
-/* =========================
+/* =========================================
 PARALLAX
-========================= */
+========================================= */
+
+if(window.innerWidth > 768){
 
 window.addEventListener("scroll", () => {
 
@@ -1118,9 +1361,13 @@ window.addEventListener("scroll", () => {
 
 });
 
-/* =========================
+}
+
+/* =========================================
 CARD 3D
-========================= */
+========================================= */
+
+if(window.innerWidth > 768){
 
 const card =
 document.querySelector(".card");
@@ -1141,9 +1388,11 @@ document.addEventListener(
 
 });
 
-/* =========================
+}
+
+/* =========================================
 ANIMAÇÃO
-========================= */
+========================================= */
 
 const observer =
 new IntersectionObserver(
