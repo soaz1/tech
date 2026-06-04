@@ -4,23 +4,42 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#050505">
 
 <title>SOAZ — Digital Studio</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<!-- Preload crítico -->
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=DM+Sans:wght@300;400;500&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
 <style>
 
 /* =========================================
-RESET
+   TOKENS
+========================================= */
+
+:root{
+  --purple:       #7b2cff;
+  --purple-light: #a561ff;
+  --purple-glow:  rgba(123,44,255,.45);
+  --bg:           #050505;
+  --surface:      rgba(255,255,255,.03);
+  --border:       rgba(255,255,255,.06);
+  --text:         #e8e8e8;
+  --muted:        #888;
+
+  --ease-out: cubic-bezier(.22,1,.36,1);
+  --ease-in-out: cubic-bezier(.65,0,.35,1);
+}
+
+/* =========================================
+   RESET
 ========================================= */
 
 *{
-  margin:0;
-  padding:0;
+  margin:0; padding:0;
   box-sizing:border-box;
-  font-family:'Inter',sans-serif;
 }
 
 html{
@@ -29,1046 +48,849 @@ html{
 }
 
 body{
-  background:#050505;
-  color:white;
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
   overflow-x:hidden;
-  width:100%;
-  cursor:none;
-
   -webkit-font-smoothing:antialiased;
-  text-rendering:optimizeLegibility;
-  -webkit-overflow-scrolling:touch;
+  text-rendering:optimizeSpeed; /* mais rápido que optimizeLegibility */
+  cursor:none;
 }
 
-a{
-  text-decoration:none;
-  color:inherit;
-}
-
-button,
-a{
-  touch-action:manipulation;
-}
+a{ text-decoration:none; color:inherit; }
+button,a{ touch-action:manipulation; }
 
 /* =========================================
-SCROLLBAR
+   SCROLLBAR
 ========================================= */
 
-::-webkit-scrollbar{
-  width:12px;
-}
-
-::-webkit-scrollbar-track{
-  background:#050505;
-}
-
+::-webkit-scrollbar{ width:8px; }
+::-webkit-scrollbar-track{ background:var(--bg); }
 ::-webkit-scrollbar-thumb{
-  background:linear-gradient(
-    180deg,
-    #7b2cff,
-    #4e11b5
-  );
-
+  background:linear-gradient(180deg,var(--purple),#4e11b5);
   border-radius:30px;
-  border:2px solid #050505;
-
-  box-shadow:
-  0 0 15px rgba(123,44,255,.5);
+  border:2px solid var(--bg);
 }
 
 /* =========================================
-CURSOR
+   CURSOR — throttle via rAF
 ========================================= */
 
-.cursor{
-  width:22px;
-  height:22px;
-  border:2px solid #8f45ff;
-  border-radius:50%;
+.cursor,.cursor-dot{
   position:fixed;
   pointer-events:none;
-  transform:translate(-50%,-50%);
   z-index:999999;
+  transform:translate(-50%,-50%);
+  will-change:left,top; /* GPU hint */
+}
 
-  backdrop-filter:blur(2px);
-
-  box-shadow:
-  0 0 12px rgba(143,69,255,.6),
-  0 0 25px rgba(143,69,255,.4);
-
-  transition:
-  width .2s ease,
-  height .2s ease,
-  transform .08s linear,
-  background .2s ease;
+.cursor{
+  width:24px; height:24px;
+  border:1.5px solid var(--purple-light);
+  border-radius:50%;
+  transition:width .18s var(--ease-out),
+             height .18s var(--ease-out),
+             background .18s,
+             border-color .18s;
 }
 
 .cursor-dot{
-  width:6px;
-  height:6px;
-  background:#c084ff;
+  width:5px; height:5px;
+  background:var(--purple-light);
   border-radius:50%;
-  position:fixed;
-  pointer-events:none;
-  transform:translate(-50%,-50%);
-  z-index:999999;
-
-  box-shadow:
-  0 0 10px #8f45ff;
 }
 
-.cursor-hover{
-  width:55px;
-  height:55px;
-  background:rgba(143,69,255,.12);
-  border-color:#c084ff;
+.cursor.hover{
+  width:52px; height:52px;
+  background:rgba(123,44,255,.12);
+  border-color:var(--purple-light);
 }
 
 /* =========================================
-BACKGROUND
+   BACKGROUND FIXO — sem animação no blur
 ========================================= */
 
 .bg{
   position:fixed;
-  width:100%;
-  height:100%;
-  overflow:hidden;
+  inset:0;
   z-index:-2;
+  overflow:hidden;
+  pointer-events:none;
 }
 
 .blur{
   position:absolute;
   border-radius:50%;
-  filter:blur(120px);
-  opacity:.45;
+  /* will-change nas blurs pesadas → GPU */
+  will-change:transform;
 }
 
 .blur1{
-  width:420px;
-  height:420px;
-  background:#7b2cff;
-  top:-100px;
-  left:-100px;
+  width:500px; height:500px;
+  background:radial-gradient(circle,rgba(123,44,255,.6) 0%,transparent 70%);
+  top:-150px; left:-150px;
+  filter:blur(80px);
+  opacity:.5;
 }
 
 .blur2{
-  width:320px;
-  height:320px;
-  background:#4e11b5;
-  bottom:-100px;
-  right:-100px;
+  width:400px; height:400px;
+  background:radial-gradient(circle,rgba(78,17,181,.55) 0%,transparent 70%);
+  bottom:-150px; right:-150px;
+  filter:blur(80px);
+  opacity:.45;
 }
 
 /* =========================================
-FLOATING
+   FLOATING — CSS puro, sem JS
 ========================================= */
 
-.floating{
-  position:absolute;
+.float{
+  position:fixed;
   border-radius:50%;
-  background:rgba(143,69,255,.12);
-  animation:float 6s ease-in-out infinite;
+  background:rgba(143,69,255,.08);
+  pointer-events:none;
   z-index:-1;
+  /* animação única: opacity p/ não travar layout */
 }
 
 .float1{
-  width:80px;
-  height:80px;
-  top:12%;
-  left:10%;
+  width:90px; height:90px;
+  top:12%; left:8%;
+  animation:floatY 7s var(--ease-in-out) infinite;
 }
 
 .float2{
-  width:120px;
-  height:120px;
-  top:70%;
-  right:10%;
-  animation-delay:2s;
+  width:130px; height:130px;
+  top:65%; right:8%;
+  animation:floatY 9s var(--ease-in-out) infinite reverse;
+  animation-delay:-3s;
 }
 
 .float3{
-  width:60px;
-  height:60px;
-  bottom:15%;
-  left:35%;
-  animation-delay:4s;
+  width:60px; height:60px;
+  bottom:18%; left:38%;
+  animation:floatY 6s var(--ease-in-out) infinite;
+  animation-delay:-5s;
 }
 
-@keyframes float{
-
-  0%{
-    transform:translateY(0px);
-  }
-
-  50%{
-    transform:translateY(-20px);
-  }
-
-  100%{
-    transform:translateY(0px);
-  }
-
+@keyframes floatY{
+  0%,100%{ transform:translateY(0); }
+  50%{     transform:translateY(-22px); }
 }
 
 /* =========================================
-HEADER
+   HEADER
 ========================================= */
 
 header{
   width:100%;
-  padding:22px 8%;
+  padding:20px 8%;
   display:flex;
   justify-content:space-between;
   align-items:center;
   position:fixed;
-  top:0;
-  left:0;
-  z-index:999;
+  top:0; left:0;
+  z-index:900;
 
-  backdrop-filter:blur(10px);
+  /* compositing layer próprio → não repaint */
+  will-change:background;
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  background:rgba(5,5,5,.15);
+  border-bottom:1px solid transparent;
+  transition:background .35s var(--ease-out),
+             border-color .35s;
+}
 
-  background:rgba(0,0,0,.25);
-
-  border-bottom:
-  1px solid rgba(255,255,255,.04);
-
-  transition:.35s;
-
-  transform:translateZ(0);
-  backface-visibility:hidden;
+header.scrolled{
+  background:rgba(5,5,5,.82);
+  border-color:var(--border);
 }
 
 .logo img{
-  width:72px;
+  width:68px;
   object-fit:contain;
-  transition:.4s;
-
-  filter:
-  drop-shadow(0 0 12px rgba(123,44,255,.3));
+  transition:filter .3s, transform .3s;
+  filter:drop-shadow(0 0 10px rgba(123,44,255,.3));
 }
 
 .logo img:hover{
-  transform:scale(1.05);
-
-  filter:
-  drop-shadow(0 0 25px rgba(123,44,255,.6));
+  transform:scale(1.06);
+  filter:drop-shadow(0 0 22px rgba(123,44,255,.6));
 }
 
 nav{
   display:flex;
-  gap:40px;
+  gap:36px;
 }
 
 nav a{
-  color:#d6d6d6;
-  transition:.3s;
-  font-size:15px;
+  color:#c0c0c0;
+  font-size:14.5px;
+  font-weight:500;
+  letter-spacing:.02em;
   position:relative;
+  transition:color .25s;
 }
 
 nav a::after{
   content:'';
   position:absolute;
-  width:0%;
-  height:2px;
-  background:#8f45ff;
-  left:0;
-  bottom:-6px;
-  transition:.3s;
+  left:0; bottom:-5px;
+  width:0; height:1.5px;
+  background:var(--purple-light);
+  transition:width .28s var(--ease-out);
 }
 
-nav a:hover{
-  color:white;
-}
-
-nav a:hover::after{
-  width:100%;
-}
+nav a:hover{ color:#fff; }
+nav a:hover::after{ width:100%; }
 
 /* =========================================
-BUTTONS
+   BOTÕES
 ========================================= */
 
 .btn{
-  padding:14px 28px;
+  display:inline-block;
+  padding:13px 26px;
   border:none;
-  border-radius:15px;
-
-  background:linear-gradient(
-    135deg,
-    #7b2cff,
-    #9d63ff
-  );
-
-  color:white;
-  font-weight:600;
+  border-radius:14px;
+  background:linear-gradient(135deg,var(--purple),var(--purple-light));
+  color:#fff;
+  font-family:'DM Sans',sans-serif;
+  font-weight:500;
+  font-size:15px;
   cursor:none;
-
-  transition:.3s;
-
-  box-shadow:
-  0 0 25px rgba(123,44,255,.35);
-
-  transform:translateZ(0);
+  transition:transform .22s var(--ease-out),
+             box-shadow .22s;
+  box-shadow:0 0 22px var(--purple-glow);
+  /* layer separado p/ não repainter o resto */
+  will-change:transform;
 }
 
 .btn:hover{
   transform:translateY(-4px);
-
-  box-shadow:
-  0 0 35px rgba(123,44,255,.55);
+  box-shadow:0 6px 32px var(--purple-glow);
 }
 
-.btn-secondary{
+.btn-outline{
   background:transparent;
-  border:1px solid rgba(255,255,255,.08);
+  border:1px solid var(--border);
   box-shadow:none;
+  color:var(--text);
+}
+
+.btn-outline:hover{
+  border-color:rgba(123,44,255,.5);
+  box-shadow:0 4px 20px rgba(123,44,255,.15);
 }
 
 /* =========================================
-HERO
+   HERO
 ========================================= */
 
 .hero{
-  min-height:100vh;
+  min-height:100svh; /* svh = sem barra mobile */
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:60px;
-
-  padding:160px 8% 100px;
-
+  padding:140px 8% 80px;
   position:relative;
   z-index:1;
-
-  will-change:transform;
 }
 
-.hero-text{
-  max-width:650px;
+/* Texto entra com CSS, sem JS */
+.hero-text > *{
+  opacity:0;
+  transform:translateY(28px);
+  animation:fadeUp .8s var(--ease-out) forwards;
+}
+
+.hero-text .tag     { animation-delay:.05s; }
+.hero-text h1       { animation-delay:.18s; }
+.hero-text p        { animation-delay:.30s; }
+.hero-text .hero-btns{ animation-delay:.42s; }
+
+@keyframes fadeUp{
+  to{ opacity:1; transform:translateY(0); }
 }
 
 .tag{
   display:inline-flex;
   align-items:center;
-  gap:10px;
-
-  padding:10px 18px;
+  gap:9px;
+  padding:9px 16px;
   border-radius:50px;
-
   border:1px solid rgba(255,255,255,.07);
-
   background:rgba(255,255,255,.03);
-
-  margin-bottom:25px;
-
-  color:#cfcfcf;
-  font-size:14px;
+  margin-bottom:22px;
+  color:#b8b8b8;
+  font-size:13.5px;
 }
 
 .dot{
-  width:10px;
-  height:10px;
+  width:8px; height:8px;
   border-radius:50%;
-  background:#8f45ff;
+  background:var(--purple-light);
+  box-shadow:0 0 12px var(--purple-light);
+  /* piscar via CSS — sem JS */
+  animation:pulse 2.2s ease-in-out infinite;
+}
 
-  box-shadow:
-  0 0 15px #8f45ff;
+@keyframes pulse{
+  0%,100%{ box-shadow:0 0 8px var(--purple-light); }
+  50%{     box-shadow:0 0 18px var(--purple-light), 0 0 32px var(--purple); }
 }
 
 .hero h1{
-  font-size:82px;
-  line-height:1;
-  margin-bottom:25px;
+  font-family:'Syne',sans-serif;
+  font-size:80px;
+  line-height:1.0;
   font-weight:900;
+  margin-bottom:22px;
+  letter-spacing:-.03em;
 }
 
-.hero h1 span{
-  color:#8f45ff;
+.hero h1 em{
+  font-style:normal;
+  color:var(--purple-light);
+  /* gradiente no texto */
+  background:linear-gradient(135deg,var(--purple-light),#d4a0ff);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
 }
 
 .hero p{
-  color:#b0b0b0;
-  line-height:1.9;
-  font-size:18px;
-  margin-bottom:35px;
+  color:var(--muted);
+  line-height:1.85;
+  font-size:17px;
+  max-width:480px;
+  margin-bottom:32px;
 }
 
-.hero-buttons{
+.hero-btns{
   display:flex;
-  gap:20px;
+  gap:16px;
   flex-wrap:wrap;
 }
 
 /* =========================================
-CARD
+   CARD VISUAL
 ========================================= */
 
 .visual{
-  position:relative;
+  flex-shrink:0;
+  opacity:0;
+  animation:fadeUp .9s var(--ease-out) .5s forwards;
 }
 
 .card{
-  width:450px;
-  height:450px;
-  border-radius:35px;
-
-  background:linear-gradient(
-    145deg,
-    #101010,
-    #070707
-  );
-
-  border:1px solid rgba(255,255,255,.05);
-
+  width:420px; height:420px;
+  border-radius:32px;
+  background:linear-gradient(145deg,#0f0f0f,#070707);
+  border:1px solid rgba(255,255,255,.06);
   position:relative;
   overflow:hidden;
-
-  box-shadow:
-  0 0 60px rgba(123,44,255,.18),
-  inset 0 0 40px rgba(255,255,255,.02);
-
-  transform:translateZ(0);
-  backface-visibility:hidden;
+  /* 3D fica no GPU */
+  transform-style:preserve-3d;
+  will-change:transform;
+  transition:transform .08s linear;
+  box-shadow:0 0 70px rgba(123,44,255,.14),
+             inset 0 0 50px rgba(255,255,255,.015);
 }
 
 .card::before{
   content:'';
   position:absolute;
-
-  width:220px;
-  height:220px;
-
-  background:#7b2cff;
-  border-radius:50%;
-
-  filter:blur(100px);
-
-  top:-50px;
-  right:-50px;
-
-  opacity:.55;
+  width:240px; height:240px;
+  background:radial-gradient(circle,rgba(123,44,255,.8) 0%,transparent 70%);
+  top:-60px; right:-60px;
+  filter:blur(60px);
+  opacity:.5;
+  pointer-events:none;
 }
 
 .paint{
   position:absolute;
-
-  width:130px;
-  height:130px;
-
   border-radius:50%;
-
-  background:#8f45ff;
-
-  filter:blur(80px);
-  opacity:.4;
+  filter:blur(70px);
+  opacity:.35;
+  pointer-events:none;
 }
 
-.paint1{
-  bottom:20px;
-  left:20px;
-}
-
-.paint2{
-  top:20px;
-  right:20px;
-}
+.paint1{ width:120px; height:120px; background:var(--purple); bottom:10px; left:10px; }
+.paint2{ width:100px; height:100px; background:var(--purple-light); top:15px; right:15px; }
 
 .hero-logo{
   position:absolute;
-
-  width:270px;
-
-  top:50%;
-  left:50%;
-
-  transform:
-  translate(-50%,-50%)
-  rotate(-6deg);
-
+  width:250px;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%) rotate(-5deg);
   z-index:2;
-
-  transition:.4s;
-
-  filter:
-  drop-shadow(0 0 30px rgba(255,255,255,.06))
-  drop-shadow(0 0 35px rgba(123,44,255,.35));
+  filter:drop-shadow(0 0 30px rgba(255,255,255,.05))
+         drop-shadow(0 0 40px rgba(123,44,255,.3));
 }
 
 /* =========================================
-SECTIONS
+   SECTIONS
 ========================================= */
 
-.services,
-.about,
-.contact{
-  padding:120px 8%;
+.services,.about,.contact{
+  padding:110px 8%;
   position:relative;
   z-index:1;
+  /* content-visibility: auto melhora FPS no scroll */
+  content-visibility:auto;
+  contain-intrinsic-size:0 600px;
 }
 
 .section-title{
   text-align:center;
-  margin-bottom:70px;
+  margin-bottom:60px;
 }
 
 .section-title h2{
-  font-size:56px;
-  margin-bottom:15px;
+  font-family:'Syne',sans-serif;
+  font-size:52px;
+  font-weight:800;
+  letter-spacing:-.025em;
+  margin-bottom:12px;
 }
 
-.section-title span{
-  color:#8f45ff;
+.section-title em{
+  font-style:normal;
+  background:linear-gradient(135deg,var(--purple-light),#d4a0ff);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
 }
 
 .section-title p{
-  color:#9e9e9e;
+  color:var(--muted);
+  font-size:16px;
 }
+
+/* =========================================
+   SERVICE CARDS
+========================================= */
 
 .grid{
   display:grid;
-
-  grid-template-columns:
-  repeat(auto-fit,minmax(260px,1fr));
-
-  gap:25px;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:22px;
 }
 
 .service-card{
-  background:rgba(255,255,255,.03);
-
-  border:1px solid rgba(255,255,255,.05);
-
-  border-radius:28px;
-  padding:35px;
-
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:24px;
+  padding:32px;
   position:relative;
   overflow:hidden;
+  /* transição só no transform e border — não "all" */
+  transition:transform .25s var(--ease-out),
+             border-color .25s,
+             box-shadow .25s;
+  will-change:transform;
+}
 
-  transition:.25s;
-
-  transform:translateZ(0);
-  backface-visibility:hidden;
+/* linha brilhante no hover via pseudo-element */
+.service-card::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:24px;
+  border:1px solid transparent;
+  background:linear-gradient(135deg,rgba(123,44,255,.4),transparent) border-box;
+  -webkit-mask:linear-gradient(#fff 0 0) padding-box,
+               linear-gradient(#fff 0 0);
+  -webkit-mask-composite:destination-out;
+  mask-composite:exclude;
+  opacity:0;
+  transition:opacity .25s;
 }
 
 .service-card:hover{
   transform:translateY(-8px);
+  border-color:transparent;
+  box-shadow:0 14px 40px rgba(123,44,255,.18);
+}
 
-  border-color:
-  rgba(143,69,255,.4);
-
-  box-shadow:
-  0 0 40px rgba(123,44,255,.18);
+.service-card:hover::after{
+  opacity:1;
 }
 
 .icon{
-  font-size:44px;
-  margin-bottom:20px;
+  font-size:40px;
+  margin-bottom:18px;
+  display:block;
 }
 
 .service-card h3{
-  margin-bottom:15px;
-  font-size:24px;
+  font-family:'Syne',sans-serif;
+  font-size:21px;
+  font-weight:700;
+  margin-bottom:12px;
 }
 
 .service-card p{
-  color:#b4b4b4;
-  line-height:1.8;
+  color:#9e9e9e;
+  line-height:1.75;
+  font-size:14.5px;
 }
 
 /* =========================================
-ABOUT
+   ABOUT
 ========================================= */
 
 .about-box h2{
-  font-size:58px;
-  margin-bottom:25px;
+  font-family:'Syne',sans-serif;
+  font-size:54px;
+  font-weight:800;
+  letter-spacing:-.025em;
+  margin-bottom:22px;
 }
 
-.about-box span{
-  color:#8f45ff;
+.about-box em{
+  font-style:normal;
+  background:linear-gradient(135deg,var(--purple-light),#d4a0ff);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
 }
 
-.about-box p{
-  color:#b3b3b3;
-  line-height:1.9;
-  margin-bottom:20px;
+.about-box > p{
+  color:#a0a0a0;
+  line-height:1.85;
+  margin-bottom:16px;
+  font-size:16px;
 }
 
 .stats{
   display:flex;
-  gap:20px;
+  gap:18px;
   flex-wrap:wrap;
-  margin-top:30px;
+  margin-top:28px;
 }
 
 .stat{
-  background:rgba(255,255,255,.03);
+  background:var(--surface);
+  border:1px solid var(--border);
+  padding:22px 28px;
+  border-radius:20px;
+  min-width:150px;
+  transition:border-color .2s, transform .2s var(--ease-out);
+}
 
-  border:1px solid rgba(255,255,255,.05);
-
-  padding:25px;
-  border-radius:24px;
-
-  min-width:170px;
+.stat:hover{
+  border-color:rgba(123,44,255,.3);
+  transform:translateY(-4px);
 }
 
 .stat h3{
-  font-size:36px;
-  color:#8f45ff;
+  font-family:'Syne',sans-serif;
+  font-size:34px;
+  font-weight:800;
+  background:linear-gradient(135deg,var(--purple-light),#d4a0ff);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+
+.stat p{
+  color:var(--muted);
+  font-size:13px;
+  margin-top:4px;
 }
 
 /* =========================================
-CONTACT
+   CONTACT
 ========================================= */
 
 .contact-box{
-  background:linear-gradient(
-    145deg,
-    #101010,
-    #080808
-  );
-
-  border:1px solid rgba(255,255,255,.05);
-
-  border-radius:35px;
-
-  padding:60px;
-
+  background:linear-gradient(145deg,#0d0d0d,#080808);
+  border:1px solid var(--border);
+  border-radius:32px;
+  padding:64px;
   text-align:center;
-
   position:relative;
   overflow:hidden;
 }
 
+.contact-box::before{
+  content:'';
+  position:absolute;
+  width:400px; height:400px;
+  background:radial-gradient(circle,rgba(123,44,255,.22) 0%,transparent 70%);
+  top:-100px; left:50%;
+  transform:translateX(-50%);
+  pointer-events:none;
+  filter:blur(60px);
+}
+
 .contact-box h2{
-  font-size:52px;
-  margin-bottom:20px;
+  font-family:'Syne',sans-serif;
+  font-size:48px;
+  font-weight:800;
+  letter-spacing:-.025em;
+  margin-bottom:16px;
+  position:relative;
 }
 
 .contact-box p{
-  color:#b0b0b0;
-  margin-bottom:35px;
+  color:var(--muted);
+  margin-bottom:32px;
+  font-size:16px;
+  position:relative;
 }
 
 /* =========================================
-FOOTER
+   FOOTER
 ========================================= */
 
 footer{
-  padding:40px 8%;
-  border-top:1px solid rgba(255,255,255,.05);
-
+  padding:36px 8%;
+  border-top:1px solid var(--border);
   text-align:center;
-  color:#8f8f8f;
+  color:#555;
+  font-size:13.5px;
+  letter-spacing:.03em;
 }
 
 /* =========================================
-RESPONSIVIDADE
+   REVEAL via IntersectionObserver
+========================================= */
+
+.reveal{
+  opacity:0;
+  transform:translateY(30px);
+  transition:opacity .65s var(--ease-out),
+             transform .65s var(--ease-out);
+}
+
+.reveal.visible{
+  opacity:1;
+  transform:none;
+}
+
+/* stagger automático via CSS */
+.reveal:nth-child(2){ transition-delay:.08s; }
+.reveal:nth-child(3){ transition-delay:.16s; }
+.reveal:nth-child(4){ transition-delay:.24s; }
+
+/* =========================================
+   RESPONSIVO
 ========================================= */
 
 @media(max-width:1100px){
-
-  body{
-    cursor:auto;
-  }
-
-  .cursor,
-  .cursor-dot{
-    display:none;
-  }
-
-  nav{
-    display:none;
-  }
-
-  header{
-    padding:20px 6%;
-  }
+  body{ cursor:auto; }
+  .cursor,.cursor-dot{ display:none; }
+  nav{ display:none; }
+  header{ padding:18px 6%; }
 
   .hero{
     flex-direction:column;
     text-align:center;
-
-    padding:
-    150px 6% 90px;
+    padding:130px 6% 80px;
+    gap:50px;
   }
 
-  .hero-buttons{
-    justify-content:center;
-  }
-
-  .hero h1{
-    font-size:58px;
-  }
-
-  .card{
-    width:380px;
-    height:380px;
-  }
-
-  .hero-logo{
-    width:220px;
-  }
-
+  .hero-btns{ justify-content:center; }
+  .hero h1{ font-size:60px; }
+  .hero p{ max-width:100%; margin:0 auto 28px; }
+  .card{ width:360px; height:360px; }
+  .hero-logo{ width:210px; }
 }
 
 @media(max-width:768px){
-
-  .floating{
-    animation:none;
-    opacity:.15;
-  }
-
-  .blur{
-    filter:blur(90px);
-  }
-
-  .hero,
-  .services,
-  .about,
-  .contact{
-    padding-left:5%;
-    padding-right:5%;
-  }
+  .float{ animation:none; opacity:.12; }
 
   .hero{
-    min-height:auto;
-    padding-top:140px;
+    padding:120px 5% 70px;
     gap:40px;
+    min-height:auto;
   }
 
-  .hero h1{
-    font-size:46px;
-    line-height:1.1;
-  }
+  .hero h1{ font-size:44px; line-height:1.08; }
+  .hero p{ font-size:15px; }
 
-  .hero p{
-    font-size:16px;
-  }
-
-  .hero-buttons{
+  .hero-btns{
     flex-direction:column;
     width:100%;
   }
 
-  .hero-buttons a,
-  .hero-buttons button,
-  .btn{
-    width:100%;
-  }
+  .hero-btns .btn{ width:100%; text-align:center; }
 
-  .card{
-    width:100%;
-    max-width:320px;
-    height:320px;
-  }
+  .card{ width:min(310px,90vw); height:min(310px,90vw); }
+  .hero-logo{ width:170px; }
 
-  .hero-logo{
-    width:180px;
-  }
+  .services,.about,.contact{ padding:80px 5%; }
 
   .section-title h2,
   .about-box h2,
-  .contact-box h2{
-    font-size:36px;
-  }
+  .contact-box h2{ font-size:34px; }
 
-  .stats{
-    flex-direction:column;
-  }
+  .stats{ flex-direction:column; }
+  .stat{ width:100%; }
 
-  .stat{
-    width:100%;
-  }
-
-  .contact-box{
-    padding:45px 25px;
-  }
-
-  .parallax{
-    transform:none !important;
-  }
-
+  .contact-box{ padding:42px 22px; }
+  .contact-box h2{ font-size:30px; }
 }
 
 @media(max-width:480px){
-
-  .hero h1{
-    font-size:38px;
-  }
-
-  .hero p{
-    font-size:15px;
-  }
-
-  .card{
-    max-width:280px;
-    height:280px;
-  }
-
-  .hero-logo{
-    width:160px;
-  }
-
+  .hero h1{ font-size:36px; }
   .section-title h2,
-  .about-box h2,
-  .contact-box h2{
-    font-size:30px;
-  }
-
-  .service-card{
-    padding:24px;
-  }
-
+  .about-box h2{ font-size:28px; }
+  .service-card{ padding:22px; }
 }
 
-/* =========================================
-TOUCH DEVICES
-========================================= */
-
 @media(hover:none){
+  .service-card:hover,
+  .btn:hover,
+  .stat:hover{ transform:none; }
+}
 
-  .service-card:hover{
-    transform:none;
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms !important;
+    transition-duration:.01ms !important;
   }
-
-  .btn:hover{
-    transform:none;
-  }
-
 }
 
 </style>
 
 </head>
-
 <body>
 
-<div class="cursor"></div>
-<div class="cursor-dot"></div>
+<!-- Cursor — só aparece em desktop via JS -->
+<div class="cursor" aria-hidden="true"></div>
+<div class="cursor-dot" aria-hidden="true"></div>
 
-<div class="bg">
+<!-- Background -->
+<div class="bg" aria-hidden="true">
   <div class="blur blur1"></div>
   <div class="blur blur2"></div>
 </div>
 
-<div class="floating float1"></div>
-<div class="floating float2"></div>
-<div class="floating float3"></div>
+<div class="float float1" aria-hidden="true"></div>
+<div class="float float2" aria-hidden="true"></div>
+<div class="float float3" aria-hidden="true"></div>
 
-<header>
-
+<!-- Header -->
+<header id="header">
   <div class="logo">
-    <img src="logo.png" alt="SOAZ Logo">
+    <a href="#"><img src="logo.png" alt="SOAZ" width="68" height="44"></a>
   </div>
 
-  <nav>
+  <nav aria-label="Navegação principal">
     <a href="#">Início</a>
     <a href="#services">Serviços</a>
     <a href="#about">Sobre</a>
     <a href="#contact">Contato</a>
   </nav>
 
-  <a href="https://w.app/soaz" target="_blank">
-    <button class="btn">
-      Entrar em contato
-    </button>
+  <a href="https://w.app/soaz" target="_blank" rel="noopener">
+    <button class="btn">Entrar em contato</button>
   </a>
-
 </header>
 
-<section class="hero parallax">
-
+<!-- Hero -->
+<section class="hero">
   <div class="hero-text">
-
     <div class="tag">
-      <div class="dot"></div>
+      <div class="dot" aria-hidden="true"></div>
       Nova geração digital
     </div>
 
-    <h1>
-      Criando experiências
-      <span>digitais</span>
-      do futuro.
-    </h1>
+    <h1>Criando<br>experiências<br><em>digitais</em><br>do futuro.</h1>
 
-    <p>
-      A SOAZ transforma ideias em sites,
-      sistemas e plataformas modernas
-      com identidade visual marcante,
-      performance extrema e design
-      inspirado na cultura urbana.
-    </p>
+    <p>A SOAZ transforma ideias em sites, sistemas e plataformas modernas com identidade visual marcante, performance extrema e design inspirado na cultura urbana.</p>
 
-    <div class="hero-buttons">
-
-      <a href="https://w.app/soaz" target="_blank">
-        <button class="btn">
-          Começar projeto
-        </button>
+    <div class="hero-btns">
+      <a href="https://w.app/soaz" target="_blank" rel="noopener">
+        <button class="btn">Começar projeto</button>
       </a>
-
-      <button class="btn btn-secondary">
-        Ver projetos
-      </button>
-
+      <a href="#services">
+        <button class="btn btn-outline">Ver serviços</button>
+      </a>
     </div>
-
   </div>
 
   <div class="visual">
-
-    <div class="card">
-
-      <div class="paint paint1"></div>
-      <div class="paint paint2"></div>
-
-      <img
-        src="logo.png"
-        class="hero-logo"
-        alt="SOAZ">
-
+    <div class="card" id="card3d">
+      <div class="paint paint1" aria-hidden="true"></div>
+      <div class="paint paint2" aria-hidden="true"></div>
+      <img src="logo.png" class="hero-logo" alt="SOAZ" width="250" height="163" loading="eager">
     </div>
-
   </div>
-
 </section>
 
-<section class="services parallax" id="services">
-
-  <div class="section-title">
-
-    <h2>
-      Nossos <span>Serviços</span>
-    </h2>
-
-    <p>
-      Minimalismo. Tecnologia. Impacto visual.
-    </p>
-
+<!-- Services -->
+<section class="services" id="services">
+  <div class="section-title reveal">
+    <h2>Nossos <em>Serviços</em></h2>
+    <p>Minimalismo. Tecnologia. Impacto visual.</p>
   </div>
 
   <div class="grid">
-
-    <div class="service-card">
-
-      <div class="icon">💻</div>
-
+    <div class="service-card reveal">
+      <span class="icon">💻</span>
       <h3>Sites Premium</h3>
-
-      <p>
-        Sites modernos com visual impactante,
-        animações suaves e experiência futurista.
-      </p>
-
+      <p>Sites modernos com visual impactante, animações suaves e experiência futurista.</p>
     </div>
-
-    <div class="service-card">
-
-      <div class="icon">⚡</div>
-
+    <div class="service-card reveal">
+      <span class="icon">⚡</span>
       <h3>Sistemas Web</h3>
-
-      <p>
-        Plataformas inteligentes para empresas,
-        engenharia e startups.
-      </p>
-
+      <p>Plataformas inteligentes para empresas, engenharia e startups.</p>
     </div>
-
-    <div class="service-card">
-
-      <div class="icon">🎨</div>
-
+    <div class="service-card reveal">
+      <span class="icon">🎨</span>
       <h3>UI/UX Design</h3>
-
-      <p>
-        Interfaces minimalistas inspiradas
-        em street art e tecnologia.
-      </p>
-
+      <p>Interfaces minimalistas inspiradas em street art e tecnologia.</p>
     </div>
-
-    <div class="service-card">
-
-      <div class="icon">🚀</div>
-
+    <div class="service-card reveal">
+      <span class="icon">🚀</span>
       <h3>Inovação Digital</h3>
-
-      <p>
-        Transformamos ideias em negócios
-        digitais modernos.
-      </p>
-
+      <p>Transformamos ideias em negócios digitais modernos.</p>
     </div>
-
   </div>
-
 </section>
 
-<section class="about parallax" id="about">
-
-  <div class="about-box">
-
-    <h2>
-      Somos a <span>SOAZ</span>
-    </h2>
-
-    <p>
-      Uma software house criada para construir
-      experiências digitais diferentes do padrão.
-    </p>
-
-    <p>
-      Misturamos design futurista,
-      tecnologia moderna e identidade visual forte.
-    </p>
+<!-- About -->
+<section class="about" id="about">
+  <div class="about-box reveal">
+    <h2>Somos a <em>SOAZ</em></h2>
+    <p>Uma software house criada para construir experiências digitais diferentes do padrão.</p>
+    <p>Misturamos design futurista, tecnologia moderna e identidade visual forte.</p>
 
     <div class="stats">
-
-      <div class="stat">
+      <div class="stat reveal">
         <h3>100%</h3>
         <p>Visual moderno</p>
       </div>
-
-      <div class="stat">
+      <div class="stat reveal">
         <h3>24/7</h3>
         <p>Inovação constante</p>
       </div>
-
-      <div class="stat">
+      <div class="stat reveal">
         <h3>∞</h3>
         <p>Possibilidades</p>
       </div>
-
     </div>
-
   </div>
-
 </section>
 
-<section class="contact parallax" id="contact">
-
-  <div class="contact-box">
-
-    <h2>
-      Vamos criar algo absurdo?
-    </h2>
-
-    <p>
-      Entre em contato e transforme sua ideia
-      em uma experiência digital.
-    </p>
-
-    <a href="https://w.app/soaz" target="_blank">
-      <button class="btn">
-        Falar com a SOAZ
-      </button>
+<!-- Contact -->
+<section class="contact" id="contact">
+  <div class="contact-box reveal">
+    <h2>Vamos criar algo absurdo?</h2>
+    <p>Entre em contato e transforme sua ideia em uma experiência digital.</p>
+    <a href="https://w.app/soaz" target="_blank" rel="noopener">
+      <button class="btn">Falar com a SOAZ</button>
     </a>
-
   </div>
-
 </section>
 
 <footer>
@@ -1076,224 +898,100 @@ TOUCH DEVICES
 </footer>
 
 <script>
-
 /* =========================================
-HEADER OTIMIZADO
+   UTILS
 ========================================= */
 
-const header =
-document.querySelector("header");
-
-window.addEventListener(
-  "scroll",
-  () => {
-
-    if(window.scrollY > 20){
-
-      header.style.background =
-      "rgba(0,0,0,.85)";
-
-    }else{
-
-      header.style.background =
-      "rgba(0,0,0,.25)";
-
-    }
-
-  },
-  { passive:true }
-);
-
-/* =========================================
-CURSOR DESKTOP
-========================================= */
-
-if(window.innerWidth > 1100){
-
-const cursor =
-document.querySelector(".cursor");
-
-const cursorDot =
-document.querySelector(".cursor-dot");
-
-document.addEventListener(
-  "mousemove",
-  (e) => {
-
-    requestAnimationFrame(() => {
-
-      cursor.style.left =
-      e.clientX + "px";
-
-      cursor.style.top =
-      e.clientY + "px";
-
-      cursorDot.style.left =
-      e.clientX + "px";
-
-      cursorDot.style.top =
-      e.clientY + "px";
-
+/* rAF throttle — evita chamadas excedentes */
+function rafThrottle(fn){
+  let id = null;
+  return function(...args){
+    if(id) return;
+    id = requestAnimationFrame(() => {
+      fn.apply(this, args);
+      id = null;
     });
-
-});
-
-const hoverItems =
-document.querySelectorAll(
-"a, button, .service-card"
-);
-
-hoverItems.forEach((item) => {
-
-  item.addEventListener(
-    "mouseenter",
-    () => {
-
-      cursor.classList.add(
-        "cursor-hover"
-      );
-
-    });
-
-  item.addEventListener(
-    "mouseleave",
-    () => {
-
-      cursor.classList.remove(
-        "cursor-hover"
-      );
-
-    });
-
-});
-
+  };
 }
 
-/* =========================================
-PARALLAX DESKTOP
-========================================= */
-
-if(window.innerWidth > 1024){
-
-let ticking = false;
-
-window.addEventListener(
-  "scroll",
-  () => {
-
-    if(!ticking){
-
-      requestAnimationFrame(() => {
-
-        const scrollY =
-        window.scrollY;
-
-        document.querySelectorAll(
-          ".parallax"
-        ).forEach((element, index) => {
-
-          const speed =
-          (index + 1) * 0.015;
-
-          element.style.transform =
-          `translateY(${scrollY * speed}px)`;
-
-        });
-
-        ticking = false;
-
-      });
-
-      ticking = true;
-
-    }
-
-  },
-  { passive:true }
-);
-
-}
+const isMobile = window.innerWidth <= 1100;
+const noMotion  = matchMedia('(prefers-reduced-motion:reduce)').matches;
 
 /* =========================================
-CARD 3D
+   HEADER SCROLL
 ========================================= */
 
-if(window.innerWidth > 1024){
+const header = document.getElementById('header');
 
-const card =
-document.querySelector(".card");
-
-document.addEventListener(
-  "mousemove",
-  (e) => {
-
-    requestAnimationFrame(() => {
-
-      let x =
-      (window.innerWidth / 2 - e.pageX) / 35;
-
-      let y =
-      (window.innerHeight / 2 - e.pageY) / 35;
-
-      card.style.transform =
-      `rotateY(${x}deg)
-       rotateX(${-y}deg)`;
-
-    });
-
+const onScroll = rafThrottle(() => {
+  header.classList.toggle('scrolled', window.scrollY > 20);
 });
 
-}
+window.addEventListener('scroll', onScroll, { passive:true });
 
 /* =========================================
-ANIMAÇÕES
+   CURSOR — só desktop, rAF throttle
 ========================================= */
 
-const observer =
-new IntersectionObserver(
-(entries) => {
+if(!isMobile && !noMotion){
+  const cursor    = document.querySelector('.cursor');
+  const cursorDot = document.querySelector('.cursor-dot');
+  const hoverEls  = document.querySelectorAll('a,button,.service-card');
 
-  entries.forEach((entry) => {
+  /* posição separada por variável — um único rAF move os dois */
+  let cx=0, cy=0;
 
-    if(entry.isIntersecting){
-
-      requestAnimationFrame(() => {
-
-        entry.target.style.opacity =
-        "1";
-
-        entry.target.style.transform =
-        "translateY(0px)";
-
-      });
-
-    }
-
+  const moveCursor = rafThrottle((e) => {
+    cx = e.clientX; cy = e.clientY;
+    cursor.style.cssText    += `;left:${cx}px;top:${cy}px`;
+    cursorDot.style.cssText += `;left:${cx}px;top:${cy}px`;
   });
 
-},
-{
-  threshold:0.08
-});
+  document.addEventListener('mousemove', moveCursor);
 
-const hiddenElements =
-document.querySelectorAll(
-".service-card, .about-box, .contact-box"
-);
+  hoverEls.forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+  });
+}
 
-hiddenElements.forEach((el) => {
+/* =========================================
+   CARD 3D — rAF throttle, só desktop
+========================================= */
 
-  el.style.opacity = "0";
+if(!isMobile && !noMotion){
+  const card = document.getElementById('card3d');
+  const cx3d = window.innerWidth  / 2;
+  const cy3d = window.innerHeight / 2;
 
-  el.style.transform =
-  "translateY(25px)";
+  const tilt = rafThrottle((e) => {
+    const x = (cx3d - e.pageX) / 38;
+    const y = (cy3d - e.pageY) / 38;
+    card.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
+  });
 
-  el.style.transition =
-  "all .7s ease";
+  document.addEventListener('mousemove', tilt);
 
-  observer.observe(el);
+  /* reset quando mouse sai da window */
+  document.addEventListener('mouseleave', () => {
+    card.style.transform = 'rotateY(0deg) rotateX(0deg)';
+  });
+}
 
-});
+/* =========================================
+   REVEAL — IntersectionObserver único
+========================================= */
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target); /* para de observar após revelar */
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
 </script>
 
